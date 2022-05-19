@@ -1,0 +1,32 @@
+{
+  "version": "16.0.0",
+  "files": {
+    "8d244532fc6c392c3f3d1e11c6d3b708f8e9af110a1155d7693b92913fb8fe0c": {
+      "source": {
+        "path": "/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "8d244532fc6c392c3f3d1e11c6d3b708f8e9af110a1155d7693b92913fb8fe0c.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "8e18680c369d3198c1373d549ca50a6799cfdea3ed9f63caba55a0412d9dc8bf": {
+      "source": {
+        "path": "testECSServiceStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "8e18680c369d3198c1373d549ca50a6799cfdea3ed9f63caba55a0412d9dc8bf.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

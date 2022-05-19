@@ -1,3 +1,4 @@
 .vscode
 node_modules
-ianTest-service/node_modules
+ian_test-service/node_modules
+cdk.out

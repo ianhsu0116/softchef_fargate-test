@@ -792,6 +792,19 @@
         "aws:cdk:path": "testECSServiceStack/amazon-ecs-sample/Service/SecurityGroup/from testECSServiceStackamazonecssampleLBSecurityGroup1DE6C9D8:80"
       }
     },
+    "DnsNamespaceE8F044C2": {
+      "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
+      "Properties": {
+        "Name": "http-api.local",
+        "Vpc": {
+          "Ref": "testVpcCB3A84F3"
+        },
+        "Description": "Private DnsNamespace for Microservices"
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/DnsNamespace/Resource"
+      }
+    },
     "ecstestTaskExecutionRole51F46AAA": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -850,6 +863,18 @@
                   "/ian_test-service:latest"
                 ]
               ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "testServiceLogGroupA94CC2F0"
+                },
+                "awslogs-stream-prefix": "testService",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
             },
             "Name": "testServiceContainer",
             "PortMappings": [
@@ -941,6 +966,19 @@
               "Action": "ecr:GetAuthorizationToken",
               "Effect": "Allow",
               "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "testServiceLogGroupA94CC2F0",
+                  "Arn"
+                ]
+              }
             }
           ],
           "Version": "2012-10-17"
@@ -954,6 +992,18 @@
       },
       "Metadata": {
         "aws:cdk:path": "testECSServiceStack/testServiceTaskDef/ExecutionRole/DefaultPolicy/Resource"
+      }
+    },
+    "testServiceLogGroupA94CC2F0": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/ecs/testService",
+        "RetentionInDays": 731
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/testServiceLogGroup/Resource"
       }
     },
     "testServiceSecurityGroupAA456E22": {
@@ -985,10 +1035,271 @@
         "aws:cdk:path": "testECSServiceStack/testServiceSecurityGroup/Resource"
       }
     },
+    "testServiceSecurityGroupfromtestECSServiceStackhttpapiInternalALBSecurityGroup1AA3A7B880A77EDCB3": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "FromPort": 80,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "testServiceSecurityGroupAA456E22",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "httpapiInternalALBSecurityGroup65B6A92E",
+            "GroupId"
+          ]
+        },
+        "ToPort": 80
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/testServiceSecurityGroup/from testECSServiceStackhttpapiInternalALBSecurityGroup1AA3A7B8:80"
+      }
+    },
+    "tsetService9452B187": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "testclusterDF8B0D19"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "testServiceContainer",
+            "ContainerPort": 80,
+            "TargetGroupArn": {
+              "Ref": "httpapiInternalALBhttpapiListenertsetServiceTargetGroupGroupB257AA66"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "testServiceSecurityGroupAA456E22",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Ref": "testVpcPrivateSubnet1SubnetC039AD1B"
+              },
+              {
+                "Ref": "testVpcPrivateSubnet2Subnet6DA9E2A0"
+              }
+            ]
+          }
+        },
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
+                "tsetServiceCloudmapServiceBEA1334E",
+                "Arn"
+              ]
+            }
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "testServiceTaskDefD6E26AD6"
+        }
+      },
+      "DependsOn": [
+        "httpapiInternalALBhttpapiListenerC81CC029",
+        "httpapiInternalALBhttpapiListenertsetServiceTargetGroupGroupB257AA66"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/tsetService/Service"
+      }
+    },
+    "tsetServiceCloudmapServiceBEA1334E": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "DnsNamespaceE8F044C2",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "testService",
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "DnsNamespaceE8F044C2",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/tsetService/CloudmapService/Resource"
+      }
+    },
+    "httpapiInternalALB0B72E2FE": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
+            "Key": "deletion_protection.enabled",
+            "Value": "false"
+          }
+        ],
+        "Scheme": "internal",
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "httpapiInternalALBSecurityGroup65B6A92E",
+              "GroupId"
+            ]
+          }
+        ],
+        "Subnets": [
+          {
+            "Ref": "testVpcPrivateSubnet1SubnetC039AD1B"
+          },
+          {
+            "Ref": "testVpcPrivateSubnet2Subnet6DA9E2A0"
+          }
+        ],
+        "Type": "application"
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/httpapiInternalALB/Resource"
+      }
+    },
+    "httpapiInternalALBSecurityGroup65B6A92E": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB testECSServiceStackhttpapiInternalALB643B3D69",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80
+          }
+        ],
+        "VpcId": {
+          "Ref": "testVpcCB3A84F3"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/httpapiInternalALB/SecurityGroup/Resource"
+      }
+    },
+    "httpapiInternalALBSecurityGrouptotestECSServiceStacktestServiceSecurityGroupC40E927E80943146FF": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Fn::GetAtt": [
+            "httpapiInternalALBSecurityGroup65B6A92E",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "testServiceSecurityGroupAA456E22",
+            "GroupId"
+          ]
+        },
+        "FromPort": 80,
+        "ToPort": 80
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/httpapiInternalALB/SecurityGroup/to testECSServiceStacktestServiceSecurityGroupC40E927E:80"
+      }
+    },
+    "httpapiInternalALBhttpapiListenerC81CC029": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "httpapiInternalALBhttpapiListenertsetServiceTargetGroupGroupB257AA66"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "httpapiInternalALB0B72E2FE"
+        },
+        "Port": 80,
+        "Protocol": "HTTP"
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/httpapiInternalALB/httpapiListener/Resource"
+      }
+    },
+    "httpapiInternalALBhttpapiListenertsetServiceTargetGroupGroupB257AA66": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "HealthCheckIntervalSeconds": 30,
+        "HealthCheckPath": "/api/test/health",
+        "HealthCheckTimeoutSeconds": 3,
+        "Port": 80,
+        "Protocol": "HTTP",
+        "TargetGroupAttributes": [
+          {
+            "Key": "stickiness.enabled",
+            "Value": "false"
+          }
+        ],
+        "TargetType": "ip",
+        "VpcId": {
+          "Ref": "testVpcCB3A84F3"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/httpapiInternalALB/httpapiListener/tsetServiceTargetGroupGroup/Resource"
+      }
+    },
+    "HttpVpcLink": {
+      "Type": "AWS::ApiGatewayV2::VpcLink",
+      "Properties": {
+        "Name": "http-api-vpclink",
+        "SubnetIds": [
+          {
+            "Ref": "testVpcPrivateSubnet1SubnetC039AD1B"
+          },
+          {
+            "Ref": "testVpcPrivateSubnet2Subnet6DA9E2A0"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/HttpVpcLink"
+      }
+    },
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAA/31STW/CMAz9LdxDNpA2aUdgDCGhrSqIK3JT0xlKUuUDhKr+96UpXTs27eTn1+fYfu6Yj5744wAuZijS4zCnhJdrC+LIPLUrUYx5uS0Em+3lNpqxyCU5ibVLJNqa61CsnMUNJDl2fMdNjFGCwJKS3+IazJdRHd7BLsDiBa4s0nT2sHt4KS1qj1tBM8ktm1g/6+cJpWVrFE6TvS60ckWY4V9inmk05he9lIGvGArDy1nujO9eq1r4BjqDeitzfMU9SWp3umeUtEASdY+71a5Rn0k0PjUwtNsVYOtVDZ8UhXc5uLVSkE4hBykwvSvHHIwlkXtFEhQks7M/19/VYYkfeV9Hfjd507S4933jO/sLtEb20ooRnHgZq+buIUbK14VDNahiucq8myuVfT/R4npzzWMslCGr9HUKxrsRo1FONxZ9OFu45hfrsd7eNJhaMalS5AfzcB498xc+GhwM0VA7aemEPG7iF2KXe7TnAgAA"
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/31STU/DMAz9LdyzwJBA4jjGhyYhqDrEFbmpKWZdUsVJ0VT1v5MmKyswcfLLy3NsP+dczi/k2Ql88kyVm1lNhezWDtRGBOq1Q3Uuu5dGieWbfsmWIvNFTWrtC41u4A4oN97hMxQ1HvgDt2A2isCR0d/iAdyusiE8grsHh5+wE5mlNsDDwyvt0AY8ClIn+9PChV7ft6idWKPyltzu3hrfxB7+JW4ri8x/6JWOfC9QseyWtedQfVCN8A5sBcNUvLnBN9I0zvSbMdoBabQTbp+7RtuSSj4lGMu9NuCGUVkumia4HN16MFBeQw1aYfkrHWtgR6oOiiIqSFdtWNfx7DjEj/NUR2E2vdeMeHL/HCqHDYxGTo69INjKLjdp7zFmJuTFRSXUi9pUwc0HU30/MeJecBqnJFamRbuT3f4L3Gh+hC1yA8mrY/RxK63MsTFMztjdNXDgcmTjbRI+edf49GcnbNhXGbfUC21KlB982s4v5ZWcn3ww0cx67WiLMk/xC77fVJU4AwAA"
       },
       "Metadata": {
         "aws:cdk:path": "testECSServiceStack/CDKMetadata/Default"

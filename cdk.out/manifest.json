@@ -23,7 +23,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1eacfd05b3305fffc1224548f0f408bf528475c7426dfd12a9ea33ab140338a7.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/58ebdf02da9b2fbce3cd2df999680bf5ab901234cbca0bd539dd5667ad67a962.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -261,6 +261,12 @@
             "data": "amazonecssampleServiceSecurityGroupfromtestECSServiceStackamazonecssampleLBSecurityGroup1DE6C9D88090F6B40A"
           }
         ],
+        "/testECSServiceStack/DnsNamespace/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DnsNamespaceE8F044C2"
+          }
+        ],
         "/testECSServiceStack/ecstestTaskExecutionRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -285,10 +291,101 @@
             "data": "testServiceTaskDefExecutionRoleDefaultPolicy4CD7D394"
           }
         ],
+        "/testECSServiceStack/testServiceLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "testServiceLogGroupA94CC2F0"
+          }
+        ],
         "/testECSServiceStack/testServiceSecurityGroup/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "testServiceSecurityGroupAA456E22"
+          }
+        ],
+        "/testECSServiceStack/testServiceSecurityGroup/from testECSServiceStackhttpapiInternalALBSecurityGroup1AA3A7B8:80": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "testServiceSecurityGroupfromtestECSServiceStackhttpapiInternalALBSecurityGroup1AA3A7B880A77EDCB3"
+          }
+        ],
+        "/testECSServiceStack/tsetService/Service": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "tsetService9452B187"
+          }
+        ],
+        "/testECSServiceStack/tsetService/CloudmapService/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "tsetServiceCloudmapServiceBEA1334E"
+          }
+        ],
+        "/testECSServiceStack/httpapiInternalALB/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "httpapiInternalALB0B72E2FE"
+          }
+        ],
+        "/testECSServiceStack/httpapiInternalALB/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "httpapiInternalALBSecurityGroup65B6A92E"
+          }
+        ],
+        "/testECSServiceStack/httpapiInternalALB/SecurityGroup/to testECSServiceStacktestServiceSecurityGroupC40E927E:80": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "httpapiInternalALBSecurityGrouptotestECSServiceStacktestServiceSecurityGroupC40E927E80943146FF"
+          }
+        ],
+        "/testECSServiceStack/httpapiInternalALB/httpapiListener": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "A default Action already existed on this Listener and was replaced. Configure exactly one default Action.",
+            "trace": [
+              "Annotations.addMessage (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/node_modules/aws-cdk-lib/core/lib/annotations.ts:99:25)",
+              "Annotations.addWarning (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/node_modules/aws-cdk-lib/core/lib/annotations.ts:38:10)",
+              "ApplicationListener._setDefaultAction (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/node_modules/aws-cdk-lib/aws-elasticloadbalancingv2/lib/shared/base-listener.ts:144:28)",
+              "ApplicationListener.setDefaultAction (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/node_modules/aws-cdk-lib/aws-elasticloadbalancingv2/lib/alb/application-listener.ts:481:10)",
+              "ApplicationListener.addTargetGroups (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/node_modules/aws-cdk-lib/aws-elasticloadbalancingv2/lib/alb/application-listener.ts:329:12)",
+              "ApplicationListener.addTargets (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/node_modules/aws-cdk-lib/aws-elasticloadbalancingv2/lib/alb/application-listener.ts:358:10)",
+              "new testECSServiceStack (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/main.ts:171:57)",
+              "Object.<anonymous> (/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services/main.ts:202:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1101:14)",
+              "Module.m._compile (/Users/ian-hsu/.nvm/versions/node/v16.9.1/lib/node_modules/ts-node/src/index.ts:1371:23)",
+              "Module._extensions..js (node:internal/modules/cjs/loader:1153:10)",
+              "Object.require.extensions.<computed> [as .ts] (/Users/ian-hsu/.nvm/versions/node/v16.9.1/lib/node_modules/ts-node/src/index.ts:1374:12)",
+              "Module.load (node:internal/modules/cjs/loader:981:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:822:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:79:12)",
+              "main (/Users/ian-hsu/.nvm/versions/node/v16.9.1/lib/node_modules/ts-node/src/bin.ts:331:12)",
+              "Object.<anonymous> (/Users/ian-hsu/.nvm/versions/node/v16.9.1/lib/node_modules/ts-node/src/bin.ts:482:3)",
+              "Module._compile (node:internal/modules/cjs/loader:1101:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)",
+              "Module.load (node:internal/modules/cjs/loader:981:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:822:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:79:12)",
+              "node:internal/main/run_main_module:17:47"
+            ]
+          }
+        ],
+        "/testECSServiceStack/httpapiInternalALB/httpapiListener/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "httpapiInternalALBhttpapiListenerC81CC029"
+          }
+        ],
+        "/testECSServiceStack/httpapiInternalALB/httpapiListener/tsetServiceTargetGroupGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "httpapiInternalALBhttpapiListenertsetServiceTargetGroupGroupB257AA66"
+          }
+        ],
+        "/testECSServiceStack/HttpVpcLink": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpVpcLink"
           }
         ],
         "/testECSServiceStack/CDKMetadata/Default": [

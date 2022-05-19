@@ -5,25 +5,19 @@ import * as ecspatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecr from "aws-cdk-lib/aws-ecr";
-import * as path from 'path';
-import * as lambda from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
+import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
+// import * as path from 'path';
 import {
   Construct,
 } from 'constructs';
-import {
-  CorsHttpMethod,
-  HttpApi,
-  HttpMethod,
-} from '@aws-cdk/aws-apigatewayv2-alpha';
-import {
-  HttpLambdaIntegration,
-} from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 
-
-const LAMBDA_ASSETS_PATH = path.resolve(__dirname, './lambda');
 
 export class testECSServiceStack extends cdk.Stack {
   public readonly restApiId: string;
+  //Export Vpclink and ALB Listener
+  public readonly httpVpcLink: cdk.CfnResource;
+  public readonly httpApiListener: elbv2.ApplicationListener;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -63,6 +57,17 @@ export class testECSServiceStack extends cdk.Stack {
       },
     });
 
+    
+    // Cloud Map Namespace
+    const dnsNamespace = new servicediscovery.PrivateDnsNamespace(
+      this,
+      "DnsNamespace",
+      {
+        name: "http-api.local",
+        vpc: vpc,
+        description: "Private DnsNamespace for Microservices",
+      }
+    );
 
     // Task Role
     const taskrole = new iam.Role(this, "ecstestTaskExecutionRole", {
@@ -74,8 +79,7 @@ export class testECSServiceStack extends cdk.Stack {
       )
     );
 
-    
-    // Task Definitions
+     // Task Definitions
     const testServiceTaskDefinition = new ecs.FargateTaskDefinition(
       this,
       "testServiceTaskDef",
@@ -85,6 +89,20 @@ export class testECSServiceStack extends cdk.Stack {
         taskRole: taskrole,
       }
     );
+
+    // Log Groups
+    const testServiceLogGroup = new logs.LogGroup(this, "testServiceLogGroup", {
+      logGroupName: "/ecs/testService",
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // Log Driver
+    const testServiceLogDriver = new ecs.AwsLogDriver({
+      logGroup: testServiceLogGroup,
+      streamPrefix: "testService",
+    });
+
+
     // Amazon ECR Repositories
     const testservicerepo = ecr.Repository.fromRepositoryName(
       this,
@@ -96,7 +114,8 @@ export class testECSServiceStack extends cdk.Stack {
     const testServiceContainer = testServiceTaskDefinition.addContainer(
       "testServiceContainer",
       {
-        image: ecs.ContainerImage.fromEcrRepository(testservicerepo)
+        image: ecs.ContainerImage.fromEcrRepository(testservicerepo),
+        logging: testServiceLogDriver,
       }
     );
 
@@ -116,36 +135,67 @@ export class testECSServiceStack extends cdk.Stack {
     );
 
     testServiceSG.connections.allowFromAnyIpv4(ec2.Port.tcp(80));
-    // testServiceSG.connections.allowInternally(ec2.Port.tcp(80));
+    
 
-    // const testFunction = new lambda.NodejsFunction(this, 'createTestFunction', {
-    //   entry: `${LAMBDA_ASSETS_PATH}/app.ts`,
-    // });
+    // Fargate Services
+    const tsetService = new ecs.FargateService(this, "tsetService", {
+      cluster: cluster,
+      taskDefinition: testServiceTaskDefinition,
+      assignPublicIp: false,
+      desiredCount: 2,
+      securityGroups: [testServiceSG],
+      cloudMapOptions: {
+        name: "testService",
+        cloudMapNamespace: dnsNamespace,
+      },
+    });
 
-    // const api = new HttpApi(this, 'testAPI', {
-    //   apiName: 'testAPI',
-    //   corsPreflight: {
-    //     allowOrigins: ['*'],
-    //     allowHeaders: ['*'],
-    //     allowMethods: [
-    //       CorsHttpMethod.ANY,
-    //     ],
-    //     allowCredentials: false,
-    //     exposeHeaders: [],
-    //     maxAge: cdk.Duration.seconds(300),
-    //   },
-    //   createDefaultStage: true,
-    // });
+    // ALB
+    const httpApiInternalALB = new elbv2.ApplicationLoadBalancer(
+      this,
+      "httpapiInternalALB",
+      {
+        vpc: vpc,
+        internetFacing: false,
+      }
+    );
+
+    // ALB Listener
+    this.httpApiListener = httpApiInternalALB.addListener("httpapiListener", {
+      port: 80,
+      // Default Target Group
+      defaultAction: elbv2.ListenerAction.fixedResponse(200),
+    });
+
+    // Target Groups
+    const tsetServiceTargetGroup = this.httpApiListener.addTargets(
+      "tsetServiceTargetGroup",
+      {
+        port: 80,
+        // priority: 1,
+        healthCheck: {
+          path: "/api/test/health",
+          interval: cdk.Duration.seconds(30),
+          timeout: cdk.Duration.seconds(3),
+        },
+        targets: [tsetService],
+        // pathPattern: "/api/test*",
+      }
+    );
+
+    //VPC Link
+    this.httpVpcLink = new cdk.CfnResource(this, "HttpVpcLink", {
+      type: "AWS::ApiGatewayV2::VpcLink",
+      properties: {
+        Name: "http-api-vpclink",
+        SubnetIds: vpc.privateSubnets.map((m) => m.subnetId),
+      },
+    });
 
 
-    // api.addRoutes({
-    //   path: '/test',
-    //   methods: [HttpMethod.GET],
-    //   integration: new HttpLambdaIntegration('getTestFunction', testFunction),
-    // });
 
+    
   }
-
 }
 
 const app = new cdk.App();

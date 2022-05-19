@@ -23,7 +23,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/8e18680c369d3198c1373d549ca50a6799cfdea3ed9f63caba55a0412d9dc8bf.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1eacfd05b3305fffc1224548f0f408bf528475c7426dfd12a9ea33ab140338a7.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -261,52 +261,34 @@
             "data": "amazonecssampleServiceSecurityGroupfromtestECSServiceStackamazonecssampleLBSecurityGroup1DE6C9D88090F6B40A"
           }
         ],
+        "/testECSServiceStack/ecstestTaskExecutionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ecstestTaskExecutionRole51F46AAA"
+          }
+        ],
+        "/testECSServiceStack/testServiceTaskDef/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "testServiceTaskDefD6E26AD6"
+          }
+        ],
+        "/testECSServiceStack/testServiceTaskDef/ExecutionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "testServiceTaskDefExecutionRoleB59836A7"
+          }
+        ],
+        "/testECSServiceStack/testServiceTaskDef/ExecutionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "testServiceTaskDefExecutionRoleDefaultPolicy4CD7D394"
+          }
+        ],
         "/testECSServiceStack/testServiceSecurityGroup/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "testServiceSecurityGroupAA456E22"
-          }
-        ],
-        "/testECSServiceStack/createTestFunction/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "createTestFunctionServiceRoleDF02D4F1"
-          }
-        ],
-        "/testECSServiceStack/createTestFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "createTestFunction599C2225"
-          }
-        ],
-        "/testECSServiceStack/testAPI/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "testAPI7149245E"
-          }
-        ],
-        "/testECSServiceStack/testAPI/DefaultStage/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "testAPIDefaultStage480837C9"
-          }
-        ],
-        "/testECSServiceStack/testAPI/GET--test/getTestFunction/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "testAPIGETtestgetTestFunction890E4E5A"
-          }
-        ],
-        "/testECSServiceStack/testAPI/GET--test/getTestFunction-Permission": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "testAPIGETtestgetTestFunctionPermission85366252"
-          }
-        ],
-        "/testECSServiceStack/testAPI/GET--test/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "testAPIGETtestC4B23A4A"
           }
         ],
         "/testECSServiceStack/CDKMetadata/Default": [

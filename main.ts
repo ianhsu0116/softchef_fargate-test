@@ -63,44 +63,46 @@ export class testECSServiceStack extends cdk.Stack {
       },
     });
 
+
     // Task Role
-    // const taskrole = new iam.Role(this, "ecstestTaskExecutionRole", {
-    //   assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
-    // });
-    // taskrole.addManagedPolicy(
-    //   iam.ManagedPolicy.fromAwsManagedPolicyName(
-    //     "service-role/AmazonECSTaskExecutionRolePolicy"
-    //   )
-    // );
+    const taskrole = new iam.Role(this, "ecstestTaskExecutionRole", {
+      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+    });
+    taskrole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "service-role/AmazonECSTaskExecutionRolePolicy"
+      )
+    );
 
-    // // Task Definitions
-    // const testServiceTaskDefinition = new ecs.FargateTaskDefinition(
-    //   this,
-    //   "testServiceTaskDef",
-    //   {
-    //     memoryLimitMiB: 512,
-    //     cpu: 256,
-    //     taskRole: taskrole,
-    //   }
-    // );
-    // // Amazon ECR Repositories
-    // const testservicerepo = ecr.Repository.fromRepositoryName(
-    //   this,
-    //   "testservice",
-    //   "test-service"
-    // );
+    
+    // Task Definitions
+    const testServiceTaskDefinition = new ecs.FargateTaskDefinition(
+      this,
+      "testServiceTaskDef",
+      {
+        memoryLimitMiB: 512,
+        cpu: 256,
+        taskRole: taskrole,
+      }
+    );
+    // Amazon ECR Repositories
+    const testservicerepo = ecr.Repository.fromRepositoryName(
+      this,
+      "ianTest-service",
+      "ian_test-service"
+    );
 
-    // // Task Containers
-    // const testServiceContainer = testServiceTaskDefinition.addContainer(
-    //   "testServiceContainer",
-    //   {
-    //     image: ecs.ContainerImage.fromEcrRepository(testservicerepo)
-    //   }
-    // );
+    // Task Containers
+    const testServiceContainer = testServiceTaskDefinition.addContainer(
+      "testServiceContainer",
+      {
+        image: ecs.ContainerImage.fromEcrRepository(testservicerepo)
+      }
+    );
 
-    // testServiceContainer.addPortMappings({
-    //   containerPort: 80,
-    // });
+    testServiceContainer.addPortMappings({
+      containerPort: 80,
+    });
 
     //Security Groups
     const testServiceSG = new ec2.SecurityGroup(
@@ -116,31 +118,31 @@ export class testECSServiceStack extends cdk.Stack {
     testServiceSG.connections.allowFromAnyIpv4(ec2.Port.tcp(80));
     // testServiceSG.connections.allowInternally(ec2.Port.tcp(80));
 
-    const testFunction = new lambda.NodejsFunction(this, 'createTestFunction', {
-      entry: `${LAMBDA_ASSETS_PATH}/app.ts`,
-    });
+    // const testFunction = new lambda.NodejsFunction(this, 'createTestFunction', {
+    //   entry: `${LAMBDA_ASSETS_PATH}/app.ts`,
+    // });
 
-    const api = new HttpApi(this, 'testAPI', {
-      apiName: 'testAPI',
-      corsPreflight: {
-        allowOrigins: ['*'],
-        allowHeaders: ['*'],
-        allowMethods: [
-          CorsHttpMethod.ANY,
-        ],
-        allowCredentials: false,
-        exposeHeaders: [],
-        maxAge: cdk.Duration.seconds(300),
-      },
-      createDefaultStage: true,
-    });
+    // const api = new HttpApi(this, 'testAPI', {
+    //   apiName: 'testAPI',
+    //   corsPreflight: {
+    //     allowOrigins: ['*'],
+    //     allowHeaders: ['*'],
+    //     allowMethods: [
+    //       CorsHttpMethod.ANY,
+    //     ],
+    //     allowCredentials: false,
+    //     exposeHeaders: [],
+    //     maxAge: cdk.Duration.seconds(300),
+    //   },
+    //   createDefaultStage: true,
+    // });
 
 
-    api.addRoutes({
-      path: '/test',
-      methods: [HttpMethod.GET],
-      integration: new HttpLambdaIntegration('getTestFunction', testFunction),
-    });
+    // api.addRoutes({
+    //   path: '/test',
+    //   methods: [HttpMethod.GET],
+    //   integration: new HttpLambdaIntegration('getTestFunction', testFunction),
+    // });
 
   }
 

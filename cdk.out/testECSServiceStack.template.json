@@ -792,6 +792,170 @@
         "aws:cdk:path": "testECSServiceStack/amazon-ecs-sample/Service/SecurityGroup/from testECSServiceStackamazonecssampleLBSecurityGroup1DE6C9D8:80"
       }
     },
+    "ecstestTaskExecutionRole51F46AAA": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/ecstestTaskExecutionRole/Resource"
+      }
+    },
+    "testServiceTaskDefD6E26AD6": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/ian_test-service:latest"
+                ]
+              ]
+            },
+            "Name": "testServiceContainer",
+            "PortMappings": [
+              {
+                "ContainerPort": 80,
+                "Protocol": "tcp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "testServiceTaskDefExecutionRoleB59836A7",
+            "Arn"
+          ]
+        },
+        "Family": "testECSServiceStacktestServiceTaskDefBE684818",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "ecstestTaskExecutionRole51F46AAA",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/testServiceTaskDef/Resource"
+      }
+    },
+    "testServiceTaskDefExecutionRoleB59836A7": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/testServiceTaskDef/ExecutionRole/Resource"
+      }
+    },
+    "testServiceTaskDefExecutionRoleDefaultPolicy4CD7D394": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/ian_test-service"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "testServiceTaskDefExecutionRoleDefaultPolicy4CD7D394",
+        "Roles": [
+          {
+            "Ref": "testServiceTaskDefExecutionRoleB59836A7"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "testECSServiceStack/testServiceTaskDef/ExecutionRole/DefaultPolicy/Resource"
+      }
+    },
     "testServiceSecurityGroupAA456E22": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
@@ -821,197 +985,10 @@
         "aws:cdk:path": "testECSServiceStack/testServiceSecurityGroup/Resource"
       }
     },
-    "createTestFunctionServiceRoleDF02D4F1": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com"
-              }
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-              ]
-            ]
-          }
-        ]
-      },
-      "Metadata": {
-        "aws:cdk:path": "testECSServiceStack/createTestFunction/ServiceRole/Resource"
-      }
-    },
-    "createTestFunction599C2225": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
-          },
-          "S3Key": "8d244532fc6c392c3f3d1e11c6d3b708f8e9af110a1155d7693b92913fb8fe0c.zip"
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "createTestFunctionServiceRoleDF02D4F1",
-            "Arn"
-          ]
-        },
-        "Environment": {
-          "Variables": {
-            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
-          }
-        },
-        "Handler": "index.handler",
-        "Runtime": "nodejs14.x"
-      },
-      "DependsOn": [
-        "createTestFunctionServiceRoleDF02D4F1"
-      ],
-      "Metadata": {
-        "aws:cdk:path": "testECSServiceStack/createTestFunction/Resource",
-        "aws:asset:path": "/Users/ian-hsu/workCode/SoftChef/http_apiBased_service/application-load-balanced-fargate-services",
-        "aws:asset:is-bundled": true,
-        "aws:asset:property": "Code"
-      }
-    },
-    "testAPI7149245E": {
-      "Type": "AWS::ApiGatewayV2::Api",
-      "Properties": {
-        "CorsConfiguration": {
-          "AllowCredentials": false,
-          "AllowHeaders": [
-            "*"
-          ],
-          "AllowMethods": [
-            "*"
-          ],
-          "AllowOrigins": [
-            "*"
-          ],
-          "ExposeHeaders": [],
-          "MaxAge": 300
-        },
-        "Name": "testAPI",
-        "ProtocolType": "HTTP"
-      },
-      "Metadata": {
-        "aws:cdk:path": "testECSServiceStack/testAPI/Resource"
-      }
-    },
-    "testAPIDefaultStage480837C9": {
-      "Type": "AWS::ApiGatewayV2::Stage",
-      "Properties": {
-        "ApiId": {
-          "Ref": "testAPI7149245E"
-        },
-        "StageName": "$default",
-        "AutoDeploy": true
-      },
-      "Metadata": {
-        "aws:cdk:path": "testECSServiceStack/testAPI/DefaultStage/Resource"
-      }
-    },
-    "testAPIGETtestgetTestFunction890E4E5A": {
-      "Type": "AWS::ApiGatewayV2::Integration",
-      "Properties": {
-        "ApiId": {
-          "Ref": "testAPI7149245E"
-        },
-        "IntegrationType": "AWS_PROXY",
-        "IntegrationUri": {
-          "Fn::GetAtt": [
-            "createTestFunction599C2225",
-            "Arn"
-          ]
-        },
-        "PayloadFormatVersion": "2.0"
-      },
-      "Metadata": {
-        "aws:cdk:path": "testECSServiceStack/testAPI/GET--test/getTestFunction/Resource"
-      }
-    },
-    "testAPIGETtestgetTestFunctionPermission85366252": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "createTestFunction599C2225",
-            "Arn"
-          ]
-        },
-        "Principal": "apigateway.amazonaws.com",
-        "SourceArn": {
-          "Fn::Join": [
-            "",
-            [
-              "arn:",
-              {
-                "Ref": "AWS::Partition"
-              },
-              ":execute-api:",
-              {
-                "Ref": "AWS::Region"
-              },
-              ":",
-              {
-                "Ref": "AWS::AccountId"
-              },
-              ":",
-              {
-                "Ref": "testAPI7149245E"
-              },
-              "/*/*/test"
-            ]
-          ]
-        }
-      },
-      "Metadata": {
-        "aws:cdk:path": "testECSServiceStack/testAPI/GET--test/getTestFunction-Permission"
-      }
-    },
-    "testAPIGETtestC4B23A4A": {
-      "Type": "AWS::ApiGatewayV2::Route",
-      "Properties": {
-        "ApiId": {
-          "Ref": "testAPI7149245E"
-        },
-        "RouteKey": "GET /test",
-        "AuthorizationType": "NONE",
-        "Target": {
-          "Fn::Join": [
-            "",
-            [
-              "integrations/",
-              {
-                "Ref": "testAPIGETtestgetTestFunction890E4E5A"
-              }
-            ]
-          ]
-        }
-      },
-      "Metadata": {
-        "aws:cdk:path": "testECSServiceStack/testAPI/GET--test/Resource"
-      }
-    },
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAA/31TwW7bMAz9lt4VdUm7AbstydouQNEFSdFrQMuMq8SWDIlKURj+91GynbjdsBMfqUeRfJRmspl+lV+u4M1PVH6clDqTzZZAHQWHdg2qmWxeaiWWe/OyXop1yEqttiEzSDF2QRsbCJ8hK/ESv8Tm3lulgbQ1Z3IEd6t1NE9AD0D4Bu9i7fSJ4eXilSF0jAdC10nvzYl7fa3QkNiiCk7T+4OzoU49/DdwVzj0/q/wyqR4K1B52SzL4Ll6ZA3wHlwBcSp//Il7bfQw0+eINQTaoBvF+twtupNWnU4dTOV2NVAc1ct5XbPKSa1HC/kCSjAK80/pWIInrUpmZImhTXHidf07Ow3xwR/zNM9mes6AR+fPXJk3MAg5cluhoZLNxnZ7T3ZtOS8tqkOtKG3Baj7a4nzFgPkMqiyHnbE5Hrx8SuY+GJUU8zc78B6JNYmGfbkI6oi0AI99Kq9pb84ZsSq6SnvPXiug1kX3VKI0fDivdRKeoMDheRXu48tsW7FBb4PrlvQ7UB1IpA5iHuucqCMKbztPO27F7FZOJ1DWr8D/6kf/sa6jHffSM5pfRHVsKdqup4i6/xHRqD3uKookD/76NP0mv8vp1cFrPXHBkK5Qbjr7BwEQTN3TAwAA"
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/31STW/CMAz9LdxDNpA2aUdgDCGhrSqIK3JT0xlKUuUDhKr+96UpXTs27eTn1+fYfu6Yj5744wAuZijS4zCnhJdrC+LIPLUrUYx5uS0Em+3lNpqxyCU5ibVLJNqa61CsnMUNJDl2fMdNjFGCwJKS3+IazJdRHd7BLsDiBa4s0nT2sHt4KS1qj1tBM8ktm1g/6+cJpWVrFE6TvS60ckWY4V9inmk05he9lIGvGArDy1nujO9eq1r4BjqDeitzfMU9SWp3umeUtEASdY+71a5Rn0k0PjUwtNsVYOtVDZ8UhXc5uLVSkE4hBykwvSvHHIwlkXtFEhQks7M/19/VYYkfeV9Hfjd507S4933jO/sLtEb20ooRnHgZq+buIUbK14VDNahiucq8myuVfT/R4npzzWMslCGr9HUKxrsRo1FONxZ9OFu45hfrsd7eNJhaMalS5AfzcB498xc+GhwM0VA7aemEPG7iF2KXe7TnAgAA"
       },
       "Metadata": {
         "aws:cdk:path": "testECSServiceStack/CDKMetadata/Default"

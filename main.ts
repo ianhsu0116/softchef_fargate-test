@@ -27,14 +27,16 @@ export class testECSServiceStack extends cdk.Stack {
       maxAzs: 2,
       subnetConfiguration: [
         {
-          cidrMask: 20,
-          name: "public",
+          name: "pbulic",
           subnetType: ec2.SubnetType.PUBLIC,
         },
         {
-          cidrMask: 20,
-          name: "application",
+          name: "private",
           subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+        },
+        {
+          name: "isolated",
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         },
       ],
     });
@@ -125,8 +127,6 @@ export class testECSServiceStack extends cdk.Stack {
       "ian_test-service"
     );
 
-    console.log("testservicerepo", testservicerepo);
-
     // Task Containers
     const testServiceContainer = testServiceTaskDefinition.addContainer(
       "testServiceContainer",
@@ -135,8 +135,6 @@ export class testECSServiceStack extends cdk.Stack {
         logging: testServiceLogDriver,
       }
     );
-
-    // console.log(testServiceContainer.containerName);
 
     testServiceContainer.addPortMappings({
       containerPort: 80,

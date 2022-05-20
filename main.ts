@@ -9,6 +9,7 @@ import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 // import * as path from 'path';
 import { Construct } from "constructs";
+import { CpuArchitecture } from "aws-cdk-lib/aws-ecs";
 
 export class testECSServiceStack extends cdk.Stack {
   public readonly restApiId: string;
@@ -24,6 +25,20 @@ export class testECSServiceStack extends cdk.Stack {
       cidr: "172.31.0.0/16",
       natGateways: 1,
       maxAzs: 2,
+      subnetConfiguration: [
+        {
+          name: 'pbulic',
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
+        {
+          name: 'private',
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+        },
+        {
+          name: 'isolated',
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        }
+      ]
     });
 
     // Create an ECS cluster
@@ -87,6 +102,9 @@ export class testECSServiceStack extends cdk.Stack {
         memoryLimitMiB: 512,
         cpu: 256,
         taskRole: taskrole,
+        runtimePlatform: {
+          cpuArchitecture: CpuArchitecture.ARM64
+        }
       }
     );
 
@@ -135,26 +153,19 @@ export class testECSServiceStack extends cdk.Stack {
 
     testServiceSG.connections.allowFromAnyIpv4(ec2.Port.tcp(80));
 
-    // new ecspatterns.ApplicationMultipleTargetGroupsFargateService(this, 'Service', {
-    //   cluster,
-    //   vpc,
-    //   memoryLimitMiB: 512,
-    //   cpu: 256,
-    //   taskImageOptions: {
-    //     image: ecs.ContainerImage.fromRegistry("ian_test-service"),
-    //   },
-    //   targetGroups: [
-    //     {
-    //       containerPort: 80,
-    //       pathPattern: '/api/test*',
-    //       priority: 10,
-    //     },
-    //   ],
-    // });
-
     // Fargate Services success!!!
 
-    const service = new ecs.FargateService(this, 'Service', { cluster, taskDefinition: testServiceTaskDefinition });
+    const service = new ecs.FargateService(this, 'Service', {
+      cluster,
+      taskDefinition: testServiceTaskDefinition,
+      assignPublicIp: false,
+      desiredCount: 2,
+      securityGroups: [testServiceSG],
+      cloudMapOptions: {
+        name: "testService",
+        cloudMapNamespace: dnsNamespace,
+      },
+    });
 
     const lb = new elbv2.ApplicationLoadBalancer(this, 'LB', { vpc, internetFacing: true });
     const listener = lb.addListener('Listener', { port: 80 });

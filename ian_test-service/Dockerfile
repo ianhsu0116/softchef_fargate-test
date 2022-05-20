@@ -17,6 +17,7 @@ COPY . .
 LABEL maintainer="Irshad A Buchh"
 
 # EXPOSE 80
+
 EXPOSE 80
 
 # Run application

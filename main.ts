@@ -9,6 +9,7 @@ import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 // import * as path from 'path';
 import { Construct } from "constructs";
+import { CpuArchitecture } from "aws-cdk-lib/aws-ecs";
 
 export class testECSServiceStack extends cdk.Stack {
   public readonly restApiId: string;
@@ -24,6 +25,18 @@ export class testECSServiceStack extends cdk.Stack {
       cidr: "172.31.0.0/16",
       natGateways: 1,
       maxAzs: 2,
+      subnetConfiguration: [
+        {
+          cidrMask: 20,
+          name: "public",
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
+        {
+          cidrMask: 20,
+          name: "application",
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+        },
+      ],
     });
 
     // Create an ECS cluster
@@ -87,6 +100,9 @@ export class testECSServiceStack extends cdk.Stack {
         memoryLimitMiB: 512,
         cpu: 256,
         taskRole: taskrole,
+        runtimePlatform: {
+          cpuArchitecture: CpuArchitecture.ARM64,
+        },
       }
     );
 
@@ -139,23 +155,6 @@ export class testECSServiceStack extends cdk.Stack {
 
     testServiceSG.connections.allowFromAnyIpv4(ec2.Port.tcp(80));
 
-    // new ecspatterns.ApplicationMultipleTargetGroupsFargateService(this, 'Service', {
-    //   cluster,
-    //   vpc,
-    //   memoryLimitMiB: 512,
-    //   cpu: 256,
-    //   taskImageOptions: {
-    //     image: ecs.ContainerImage.fromRegistry("ian_test-service"),
-    //   },
-    //   targetGroups: [
-    //     {
-    //       containerPort: 80,
-    //       pathPattern: '/api/test*',
-    //       priority: 10,
-    //     },
-    //   ],
-    // });
-
     // Fargate Services success!!!
 
     const service = new ecs.FargateService(this, "Service", {
@@ -174,56 +173,9 @@ export class testECSServiceStack extends cdk.Stack {
       containerPort: 80,
       newTargetGroupId: "ECS",
       listener: ecs.ListenerConfig.applicationListener(listener, {
-        protocol: elbv2.ApplicationProtocol.HTTPS,
+        protocol: elbv2.ApplicationProtocol.HTTP,
       }),
     });
-    // success
-
-    // // Fargate Services
-    // const tsetService = new ecs.FargateService(this, "tsetService", {
-    //   cluster: cluster,
-    //   taskDefinition: testServiceTaskDefinition,
-    //   assignPublicIp: false,
-    //   desiredCount: 2,
-    //   securityGroups: [testServiceSG],
-    //   cloudMapOptions: {
-    //     name: "testService",
-    //     cloudMapNamespace: dnsNamespace,
-    //   },
-    // });
-
-    // // ALB
-    // const httpApiInternalALB = new elbv2.ApplicationLoadBalancer(
-    //   this,
-    //   "httpapiInternalALB",
-    //   {
-    //     vpc: vpc,
-    //     internetFacing: false,
-    //   }
-    // );
-
-    // // ALB Listener
-    // this.httpApiListener = httpApiInternalALB.addListener("httpapiListener", {
-    //   port: 80,
-    //   // Default Target Group
-    //   defaultAction: elbv2.ListenerAction.fixedResponse(200),
-    // });
-
-    // // Target Groups
-    // const tsetServiceTargetGroup = this.httpApiListener.addTargets(
-    //   "tsetServiceTargetGroup",
-    //   {
-    //     port: 80,
-    //     // priority: 1,
-    //     healthCheck: {
-    //       path: "/api/test/health",
-    //       interval: cdk.Duration.seconds(30),
-    //       timeout: cdk.Duration.seconds(3),
-    //     },
-    //     targets: [tsetService],
-    //     // pathPattern: "/api/test*",
-    //   }
-    // );
 
     //VPC Link
     this.httpVpcLink = new cdk.CfnResource(this, "HttpVpcLink", {

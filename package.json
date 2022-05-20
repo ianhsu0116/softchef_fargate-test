@@ -27,7 +27,9 @@
     "@aws-cdk/aws-iam": "^1.156.1",
     "@aws-cdk/region-info": "^2.24.1",
     "@softchef/cdk-restapi": "^2.0.91",
+    "@softchef/lambda-events": "^1.1.23",
     "aws-cdk-lib": "^2.15.0",
+    "aws-sdk": "^2.1139.0",
     "constructs": "^10.1.10"
   }
 }

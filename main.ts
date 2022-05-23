@@ -48,142 +48,115 @@ export class testECSServiceStack extends cdk.Stack {
       vpc: vpc,
     });
 
-    // Create a Fargate container image
-    const image = ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample");
+    // // Create a Fargate container image
+    // const image = ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample");
 
-    // Create higher level construct containing the Fargate service with a load balancer
-    new ecspatterns.ApplicationLoadBalancedFargateService(
-      this,
-      "amazon-ecs-sample",
-      {
-        cluster,
-        circuitBreaker: {
-          rollback: true,
-        },
-        cpu: 256,
-        desiredCount: 1,
-        taskImageOptions: {
-          image,
-          containerPort: 80,
-          logDriver: ecs.LogDrivers.awsLogs({
-            streamPrefix: id,
-            logRetention: logs.RetentionDays.ONE_MONTH,
-          }),
-        },
-      }
-    );
+    // // Create higher level construct containing the Fargate service with a load balancer
+    // new ecspatterns.ApplicationLoadBalancedFargateService(
+    //   this,
+    //   "amazon-ecs-sample",
+    //   {
+    //     cluster,
+    //     circuitBreaker: {
+    //       rollback: true,
+    //     },
+    //     cpu: 256,
+    //     desiredCount: 1,
+    //     taskImageOptions: {
+    //       image,
+    //       containerPort: 80,
+    //       logDriver: ecs.LogDrivers.awsLogs({
+    //         streamPrefix: id,
+    //         logRetention: logs.RetentionDays.ONE_MONTH,
+    //       }),
+    //     },
+    //   }
+    // );
 
-    // Cloud Map Namespace
-    const dnsNamespace = new servicediscovery.PrivateDnsNamespace(
-      this,
-      "DnsNamespace",
-      {
-        name: "http-api.local",
-        vpc: vpc,
-        description: "Private DnsNamespace for Microservices",
-      }
-    );
+    // // Cloud Map Namespace
+    // const dnsNamespace = new servicediscovery.PrivateDnsNamespace(
+    //   this,
+    //   "DnsNamespace",
+    //   {
+    //     name: "http-api.local",
+    //     vpc: vpc,
+    //     description: "Private DnsNamespace for Microservices",
+    //   }
+    // );
 
-    // Task Role
-    const taskrole = new iam.Role(this, "ecstestTaskExecutionRole", {
-      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
-    });
-    taskrole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName(
-        "service-role/AmazonECSTaskExecutionRolePolicy"
-      )
-    );
+    // // Task Role
+    // const taskrole = new iam.Role(this, "ecstestTaskExecutionRole", {
+    //   assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+    // });
+    // taskrole.addManagedPolicy(
+    //   iam.ManagedPolicy.fromAwsManagedPolicyName(
+    //     "service-role/AmazonECSTaskExecutionRolePolicy"
+    //   )
+    // );
 
-    // Task Definitions
-    const testServiceTaskDefinition = new ecs.FargateTaskDefinition(
-      this,
-      "testServiceTaskDef",
-      {
-        memoryLimitMiB: 512,
-        cpu: 256,
-        taskRole: taskrole,
-        runtimePlatform: {
-          cpuArchitecture: CpuArchitecture.ARM64
-        }
-      }
-    );
+    // // Task Definitions
+    // const testServiceTaskDefinition = new ecs.FargateTaskDefinition(
+    //   this,
+    //   "testServiceTaskDef",
+    //   {
+    //     memoryLimitMiB: 512,
+    //     cpu: 256,
+    //     taskRole: taskrole,
+    //     runtimePlatform: {
+    //       cpuArchitecture: CpuArchitecture.ARM64
+    //     }
+    //   }
+    // );
 
-    // Log Groups
-    const testServiceLogGroup = new logs.LogGroup(this, "testServiceLogGroup", {
-      logGroupName: "/ecs/testService",
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
+    // // Log Groups
+    // const testServiceLogGroup = new logs.LogGroup(this, "testServiceLogGroup", {
+    //   logGroupName: "/ecs/testService",
+    //   removalPolicy: cdk.RemovalPolicy.DESTROY,
+    // });
 
-    // Log Driver
-    const testServiceLogDriver = new ecs.AwsLogDriver({
-      logGroup: testServiceLogGroup,
-      streamPrefix: "testService",
-    });
+    // // Log Driver
+    // const testServiceLogDriver = new ecs.AwsLogDriver({
+    //   logGroup: testServiceLogGroup,
+    //   streamPrefix: "testService",
+    // });
 
-    // Amazon ECR Repositories
-    const testservicerepo = ecr.Repository.fromRepositoryName(
-      this,
-      "ianTest-service",
-      "ian_test-service"
-    );;
+    // // Amazon ECR Repositories
+    // const testservicerepo = ecr.Repository.fromRepositoryName(
+    //   this,
+    //   "ianTest-service",
+    //   "ian_test-service"
+    // );;
 
-    // Task Containers
-    const testServiceContainer = testServiceTaskDefinition.addContainer(
-      "testServiceContainer",
-      {
-        image: ecs.ContainerImage.fromEcrRepository(testservicerepo),
-        logging: testServiceLogDriver,
-      }
-    );
+    // // Task Containers
+    // const testServiceContainer = testServiceTaskDefinition.addContainer(
+    //   "testServiceContainer",
+    //   {
+    //     image: ecs.ContainerImage.fromEcrRepository(testservicerepo),
+    //     logging: testServiceLogDriver,
+    //   }
+    // );
 
-    testServiceContainer.addPortMappings({
-      containerPort: 80,
-    });
+    // testServiceContainer.addPortMappings({
+    //   containerPort: 80,
+    // });
 
-    //Security Groups
-    const testServiceSG = new ec2.SecurityGroup(
-      this,
-      "testServiceSecurityGroup",
-      {
-        allowAllOutbound: true,
-        securityGroupName: "testServiceSecurityGroup",
-        vpc,
-      }
-    );
+    // //Security Groups
+    // const testServiceSG = new ec2.SecurityGroup(
+    //   this,
+    //   "testServiceSecurityGroup",
+    //   {
+    //     allowAllOutbound: true,
+    //     securityGroupName: "testServiceSecurityGroup",
+    //     vpc,
+    //   }
+    // );
 
-    testServiceSG.connections.allowFromAnyIpv4(ec2.Port.tcp(80));
+    // testServiceSG.connections.allowFromAnyIpv4(ec2.Port.tcp(80));
 
-    // Fargate Services success!!!
+    // // Fargate Services success!!!
 
-    const service = new ecs.FargateService(this, 'Service', {
-      cluster,
-      taskDefinition: testServiceTaskDefinition,
-      assignPublicIp: false,
-      desiredCount: 2,
-      securityGroups: [testServiceSG],
-      cloudMapOptions: {
-        name: "testService",
-        cloudMapNamespace: dnsNamespace,
-      },
-    });
-
-    const lb = new elbv2.ApplicationLoadBalancer(this, 'LB', { vpc, internetFacing: true });
-    const listener = lb.addListener('Listener', { port: 80 });
-    service.registerLoadBalancerTargets(
-      {
-        containerName: testServiceContainer.containerName,
-        containerPort: 80,
-        newTargetGroupId: 'ECS',
-        listener: ecs.ListenerConfig.applicationListener(listener, {
-          protocol: elbv2.ApplicationProtocol.HTTP
-        }),
-      },
-    );
-    // success
-
-    // // Fargate Services
-    // const tsetService = new ecs.FargateService(this, "tsetService", {
-    //   cluster: cluster,
+    // const service = new ecs.FargateService(this, 'Service', {
+    //   cluster,
     //   taskDefinition: testServiceTaskDefinition,
     //   assignPublicIp: false,
     //   desiredCount: 2,
@@ -194,47 +167,74 @@ export class testECSServiceStack extends cdk.Stack {
     //   },
     // });
 
-    // // ALB
-    // const httpApiInternalALB = new elbv2.ApplicationLoadBalancer(
-    //   this,
-    //   "httpapiInternalALB",
+    // const lb = new elbv2.ApplicationLoadBalancer(this, 'LB', { vpc, internetFacing: true });
+    // const listener = lb.addListener('Listener', { port: 80 });
+    // service.registerLoadBalancerTargets(
     //   {
-    //     vpc: vpc,
-    //     internetFacing: false,
-    //   }
+    //     containerName: testServiceContainer.containerName,
+    //     containerPort: 80,
+    //     newTargetGroupId: 'ECS',
+    //     listener: ecs.ListenerConfig.applicationListener(listener, {
+    //       protocol: elbv2.ApplicationProtocol.HTTP
+    //     }),
+    //   },
     // );
+    // // success
 
-    // // ALB Listener
-    // this.httpApiListener = httpApiInternalALB.addListener("httpapiListener", {
-    //   port: 80,
-    //   // Default Target Group
-    //   defaultAction: elbv2.ListenerAction.fixedResponse(200),
+    // // // Fargate Services
+    // // const tsetService = new ecs.FargateService(this, "tsetService", {
+    // //   cluster: cluster,
+    // //   taskDefinition: testServiceTaskDefinition,
+    // //   assignPublicIp: false,
+    // //   desiredCount: 2,
+    // //   securityGroups: [testServiceSG],
+    // //   cloudMapOptions: {
+    // //     name: "testService",
+    // //     cloudMapNamespace: dnsNamespace,
+    // //   },
+    // // });
+
+    // // // ALB
+    // // const httpApiInternalALB = new elbv2.ApplicationLoadBalancer(
+    // //   this,
+    // //   "httpapiInternalALB",
+    // //   {
+    // //     vpc: vpc,
+    // //     internetFacing: false,
+    // //   }
+    // // );
+
+    // // // ALB Listener
+    // // this.httpApiListener = httpApiInternalALB.addListener("httpapiListener", {
+    // //   port: 80,
+    // //   // Default Target Group
+    // //   defaultAction: elbv2.ListenerAction.fixedResponse(200),
+    // // });
+
+    // // // Target Groups
+    // // const tsetServiceTargetGroup = this.httpApiListener.addTargets(
+    // //   "tsetServiceTargetGroup",
+    // //   {
+    // //     port: 80,
+    // //     // priority: 1,
+    // //     healthCheck: {
+    // //       path: "/api/test/health",
+    // //       interval: cdk.Duration.seconds(30),
+    // //       timeout: cdk.Duration.seconds(3),
+    // //     },
+    // //     targets: [tsetService],
+    // //     // pathPattern: "/api/test*",
+    // //   }
+    // // );
+
+    // //VPC Link
+    // this.httpVpcLink = new cdk.CfnResource(this, "HttpVpcLink", {
+    //   type: "AWS::ApiGatewayV2::VpcLink",
+    //   properties: {
+    //     Name: "http-api-vpclink",
+    //     SubnetIds: vpc.privateSubnets.map((m) => m.subnetId),
+    //   },
     // });
-
-    // // Target Groups
-    // const tsetServiceTargetGroup = this.httpApiListener.addTargets(
-    //   "tsetServiceTargetGroup",
-    //   {
-    //     port: 80,
-    //     // priority: 1,
-    //     healthCheck: {
-    //       path: "/api/test/health",
-    //       interval: cdk.Duration.seconds(30),
-    //       timeout: cdk.Duration.seconds(3),
-    //     },
-    //     targets: [tsetService],
-    //     // pathPattern: "/api/test*",
-    //   }
-    // );
-
-    //VPC Link
-    this.httpVpcLink = new cdk.CfnResource(this, "HttpVpcLink", {
-      type: "AWS::ApiGatewayV2::VpcLink",
-      properties: {
-        Name: "http-api-vpclink",
-        SubnetIds: vpc.privateSubnets.map((m) => m.subnetId),
-      },
-    });
   }
 }
 

@@ -1,9 +1,15 @@
-#!/bin/bash
-# git clone https://github.com/ahnochen/project.git
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip ./awscliv2.zip
+./aws/install
+
+git clone https://github.com/ahnochen/project.git
 
 cd project
 
 # RUN npm install
-npm install && mv node_modules /node_modules
+npm install
 
-cdk deploy 
+aws --version
+git --version
+cdk --version
+

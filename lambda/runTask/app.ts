@@ -17,6 +17,7 @@ export const handler = async (event: any = {}): Promise<any> => {
       }
       console.log('============success===========');
       console.log(JSON.stringify(data));
+      return { statusCode: 200, body: JSON.stringify(data) };
     });
 
 

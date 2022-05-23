@@ -1,35 +1,39 @@
 #!/bin/bash
 FROM node:12.4-alpine
 
-
 # Create app directory
 
 RUN mkdir /app
 WORKDIR /app
 RUN chmod -R +x /app
 
-RUN npm install aws-cdk
-
-RUN apk update && \
+# install aws-cdk & AWS-CLI
+RUN npm install aws-cdk && \
+    apk update && \
     apk upgrade && \
+    apk add curl && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && ./aws/install && \
     apk add git
 
-# RUN git clone https://github.com/ahnochen/project.git
-
-# RUN cd project
-
-# RUN npm install
-# RUN npm install && mv node_modules /node_modules
-
-# Bundle app source
 COPY . .
 
-# EXPOSE 80
+# switch into the file we clone(pretend now)
+RUN cd gitRepo
 
-EXPOSE 80
+# RUN npm install
+COPY package.json package.json
+RUN npm install && mv node_modules /node_modules
 
-# Run application
+
+# Bundle app source
+# COPY . .
+RUN cd ..
+COPY package.json package.json
+RUN npm install 
+
+
+RUN chmod -R +x docker.sh
 
 CMD ["./docker.sh"]
+

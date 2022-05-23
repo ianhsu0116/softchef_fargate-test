@@ -1,4 +1,7 @@
 .vscode
 node_modules
-ian_test-service/node_modules
 cdk.out
+
+ian_test-service/node_modules
+ex-service/gitRepo/node_modules
+ex-service/gitRepo/cdk.out

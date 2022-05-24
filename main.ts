@@ -89,7 +89,6 @@ export class testECSServiceStack extends cdk.Stack {
             actions: [
               "execute-api:Invoke",
               "execute-api:ManageConnections",
-              "sts:AssumeRole",
               "*"
             ],
             resources: ["*"],

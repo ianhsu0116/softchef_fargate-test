@@ -1,4 +1,4 @@
-import { ECSClient, RegisterContainerInstanceCommand, RegisterContainerInstanceCommandInput, RegisterTaskDefinitionCommand, RegisterTaskDefinitionCommandInput } from "@aws-sdk/client-ecs";
+import { ECSClient, RegisterTaskDefinitionCommand, RegisterTaskDefinitionCommandInput } from "@aws-sdk/client-ecs";
 
 export const handler = async (): Promise<any> => {
   const client = new ECSClient({
@@ -20,6 +20,17 @@ export const handler = async (): Promise<any> => {
         {
           name: "taskDefinitionContainerName",
           image: "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest",
+          cpu: 512,
+          memory: 1024,
+          logConfiguration: {
+            logDriver: "awslogs",
+            options: {
+              "awslogs-create-group": "true",
+              "awslogs-group": "awslogs-wordpress",
+              "awslogs-region": "us-west-2",
+              "awslogs-stream-prefix": "awslogs-example"
+            }
+          }
         },
       ],
     };
@@ -33,3 +44,5 @@ export const handler = async (): Promise<any> => {
     console.log(e);
   }
 };
+
+handler();

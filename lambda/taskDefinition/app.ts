@@ -4,7 +4,7 @@ import {
   RegisterTaskDefinitionCommandInput,
 } from "@aws-sdk/client-ecs";
 
-export const handler = async (): Promise<any> => {
+export const handler = async (event: any = {}): Promise<any> => {
   try {
     const client = new ECSClient({
       region: "us-west-2",
@@ -14,6 +14,7 @@ export const handler = async (): Promise<any> => {
       cpu: "512",
       memory: "1024",
       requiresCompatibilities: ["FARGATE"],
+      executionRoleArn: "arn:aws:iam::520095059637:role/testProject2",
       networkMode: "awsvpc",
       // runtimePlatform: {
       //   cpuArchitecture: "ARM64",

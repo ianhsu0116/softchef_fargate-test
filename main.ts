@@ -36,6 +36,18 @@ export class testECSServiceStack extends cdk.Stack {
       cidr: "172.31.0.0/16",
       natGateways: 1,
       maxAzs: 2,
+      subnetConfiguration: [
+        {
+          cidrMask: 20,
+          name: "public_projectTest",
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
+        {
+          cidrMask: 20,
+          name: "private_projectTest",
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+        },
+      ],
     });
 
     // Create an ECS cluster

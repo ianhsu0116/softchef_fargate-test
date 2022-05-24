@@ -10,4 +10,6 @@ cd ..
 
 node app.js
 
+aws --version
+
 

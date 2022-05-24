@@ -45,4 +45,4 @@ export const handler = async (): Promise<any> => {
   }
 };
 
-handler();
+// handler();

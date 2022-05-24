@@ -11,11 +11,11 @@ export const handler = async (event: any = {}): Promise<any> => {
     const params: RunTaskCommandInput = {
       cluster: "arn:aws:ecs:us-west-2:520095059637:cluster/testCluster",
       // taskDefinition: request.body.taskDefinitionArn,
-      taskDefinition: "arn:aws:ecs:us-west-2:520095059637:task-definition/test:14",
+      taskDefinition: "arn:aws:ecs:us-west-2:520095059637:task-definition/test:21",
       launchType: "FARGATE",
       networkConfiguration: {
         awsvpcConfiguration: {
-          subnets: ["subnet-05a6a33edde7d0022"],
+          subnets: ["subnet-0a00fd8575d9377e2"],
           // securityGroups: ["sg-1b7e7134"]
         }
       },
@@ -26,7 +26,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     const command = new RunTaskCommand(params);
     const response = await client.send(command);
 
-    console.log("response", JSON.stringify(response.tasks))
+    console.log("response", response);
 
 
 
@@ -37,4 +37,4 @@ export const handler = async (event: any = {}): Promise<any> => {
 
 };
 
-handler()
+// handler();

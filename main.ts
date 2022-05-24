@@ -2,18 +2,15 @@ import * as path from "path";
 import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
-import * as ecspatterns from "aws-cdk-lib/aws-ecs-patterns";
-import * as logs from "aws-cdk-lib/aws-logs";
 import * as iam from "aws-cdk-lib/aws-iam";
-import * as ecr from "aws-cdk-lib/aws-ecr";
-import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 // import * as path from 'path';
 import { Construct } from "constructs";
-import { CpuArchitecture } from "aws-cdk-lib/aws-ecs";
+import { ContainerImage } from "aws-cdk-lib/aws-ecs";
 import { RestApi, HttpMethod } from "@softchef/cdk-restapi";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 
 export interface TestAppStackProps extends cdk.NestedStackProps {
   readonly authorizationType?: apigateway.AuthorizationType;
@@ -76,6 +73,14 @@ export class testECSServiceStack extends cdk.Stack {
       ],
     });
     this.restApiId = restApi.restApiId;
+
+    const myImage = new DockerImageAsset(this, 'my-image', {
+      directory: './ex-service',
+    });
+    // Get image uri
+    console.log(myImage.imageUri);
+    // Transfer container image for task use.
+    ContainerImage.fromDockerImageAsset(myImage);
 
   }
   private TaskDefinitionFunction(): lambdaNodejs.NodejsFunction {

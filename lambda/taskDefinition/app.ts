@@ -1,34 +1,32 @@
-import * as AWS from "aws-sdk";
+import * as AWS from "@aws-sdk/client-ecs";
+import { Console } from "console";
 
-export const handler = async (event: any = {}): Promise<any> => {
+export const handler = async (): Promise<any> => {
   try {
-    const ecs = new AWS.ECS();
-    const params: AWS.ECS.Types.RegisterTaskDefinitionRequest = {
+    const ecs = new AWS.ECSClient({
+      region: "us-west-2",
+    });
+
+    const params = {
       family: "test",
-      cpu: ".25",
-      memory: "512",
-      runtimePlatform: {
-        cpuArchitecture: "ARM64",
-      },
+      cpu: "512",
+      memory: "1024",
+      // runtimePlatform: {
+      //   cpuArchitecture: "ARM64",
+      // },
       containerDefinitions: [
         {
           name: "taskDefinitionContainerName",
-          image: "ex-service",
+          image:
+            "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service/ex-service:latest",
         },
       ],
     };
 
-    ecs.registerTaskDefinition(params, function (err, data) {
-      if (err) {
-        console.log("=========error=========");
-        console.log(err);
-        return;
-      }
+    const command = new AWS.RegisterTaskDefinitionCommand(params);
+    const response = await ecs.send(command);
 
-      console.log("============success===========");
-      console.log("taskDefinitionArn: ", data.taskDefinition);
-      console.log(JSON.stringify(data));
-    });
+    console.log("ddddddddddddddddddddddddddddddd");
   } catch (e) {
     console.log("============try catch error===========");
     console.log(e);

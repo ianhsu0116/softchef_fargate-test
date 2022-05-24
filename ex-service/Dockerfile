@@ -9,7 +9,10 @@ RUN chmod -R +x /app
 
 RUN apt update && \
     apt install git && \
-    npm install -g aws-cdk
+    npm install -g aws-cdk && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"  && \
+    unzip ./awscliv2.zip  && \
+    ./aws/install
 
 
 # Bundle app source

@@ -50,7 +50,7 @@ export class testECSServiceStack extends cdk.Stack {
       resources: [
         {
           path: "/task_definition",
-          httpMethod: HttpMethod.GET,
+          httpMethod: HttpMethod.POST,
           lambdaFunction: this.TaskDefinitionFunction(),
           authorizationType: apigateway.AuthorizationType.IAM,
         },
@@ -76,7 +76,12 @@ export class testECSServiceStack extends cdk.Stack {
       new iam.Policy(this, "taskDefinitionFunctionPolicy", {
         statements: [
           new iam.PolicyStatement({
-            actions: ["execute-api:Invoke", "execute-api:ManageConnections"],
+            actions: [
+              "execute-api:Invoke",
+              "execute-api:ManageConnections",
+              "sts:AssumeRole",
+              "*",
+            ],
             resources: ["*"],
           }),
         ],
@@ -96,7 +101,11 @@ export class testECSServiceStack extends cdk.Stack {
       new iam.Policy(this, "RunTaskFunctionPolicy", {
         statements: [
           new iam.PolicyStatement({
-            actions: ["execute-api:Invoke", "execute-api:ManageConnections"],
+            actions: [
+              "execute-api:Invoke",
+              "execute-api:ManageConnections",
+              "*",
+            ],
             resources: ["*"],
           }),
         ],

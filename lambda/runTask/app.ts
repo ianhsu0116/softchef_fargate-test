@@ -1,22 +1,29 @@
-import * as AWS from "@aws-sdk/client-ecs";
+import {
+  ECSClient,
+  RunTaskCommand,
+  RunTaskCommandInput,
+} from "@aws-sdk/client-ecs";
 import { Request } from "@softchef/lambda-events";
 
 export const handler = async (event: any = {}): Promise<any> => {
   try {
     const request = new Request(event);
-    const ecs = new AWS.ECSClient({
+    const client = new ECSClient({
       region: "us-west-2",
     });
 
-    var params: AWS.RunTaskCommandInput = {
-      cluster: "testCluster",
-      // taskDefinition: request.body("taskDefinitionArn"),
+    const params: RunTaskCommandInput = {
+      cluster: "arn:aws:ecs:us-west-2:520095059637:cluster/testCluster",
       taskDefinition: request.body.taskDefinitionArn,
-      launchType: "FARGATE",
+      launchType: "EC2",
     };
 
-    const command = new AWS.RunTaskCommand(params);
-    const response = await ecs.send(command);
+    console.log(params);
+
+    const command = new RunTaskCommand(params);
+    const response = await client.send(command);
+
+    console.log(response.tasks);
 
     console.log(response);
   } catch (e) {

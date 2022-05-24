@@ -1,5 +1,6 @@
 import {
   ECSClient,
+  LogConfiguration,
   RegisterContainerInstanceCommand,
   RegisterContainerInstanceCommandInput,
   RegisterTaskDefinitionCommand,
@@ -27,6 +28,15 @@ export const handler = async (): Promise<any> => {
           name: "taskDefinitionContainerName",
           image:
             "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest",
+          logConfiguration: {
+            logDriver: "awslogs",
+            options: {
+              "awslogs-group": "/ecs/runTask",
+              "awslogs-region": "us-west-2",
+              "awslogs-create-group": "true",
+              "awslogs-stream-prefix": "testRunTask",
+            },
+          },
         },
       ],
     };
@@ -40,3 +50,5 @@ export const handler = async (): Promise<any> => {
     console.log(e);
   }
 };
+
+handler();

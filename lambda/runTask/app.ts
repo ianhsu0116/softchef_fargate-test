@@ -14,7 +14,9 @@ export const handler = async (event: any = {}): Promise<any> => {
 
     const params: RunTaskCommandInput = {
       cluster: "arn:aws:ecs:us-west-2:520095059637:cluster/testCluster",
-      taskDefinition: request.body.taskDefinitionArn,
+      // taskDefinition: request.body.taskDefinitionArn,
+      taskDefinition:
+        "arn:aws:ecs:us-west-2:520095059637:task-definition/test:16",
       launchType: "FARGATE",
       networkConfiguration: {
         awsvpcConfiguration: {
@@ -37,3 +39,5 @@ export const handler = async (event: any = {}): Promise<any> => {
     console.log(e);
   }
 };
+
+handler();

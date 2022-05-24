@@ -33,7 +33,7 @@ export const handler = async (): Promise<any> => {
             options: {
               "awslogs-group": "/ecs/runTask",
               "awslogs-region": "us-west-2",
-              "awslogs-create-group": "true",
+              // "awslogs-create-group": "true",
               "awslogs-stream-prefix": "testRunTask",
             },
           },

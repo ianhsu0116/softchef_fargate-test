@@ -16,11 +16,11 @@ export const handler = async (event: any = {}): Promise<any> => {
       cluster: "arn:aws:ecs:us-west-2:520095059637:cluster/testCluster",
       // taskDefinition: request.body.taskDefinitionArn,
       taskDefinition:
-        "arn:aws:ecs:us-west-2:520095059637:task-definition/test:16",
+        "arn:aws:ecs:us-west-2:520095059637:task-definition/test:20",
       launchType: "FARGATE",
       networkConfiguration: {
         awsvpcConfiguration: {
-          subnets: ["subnet-05a6a33edde7d0022"],
+          subnets: ["subnet-0a00fd8575d9377e2"],
           // securityGroups: ["sg-1b7e7134"]
         },
       },

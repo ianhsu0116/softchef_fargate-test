@@ -1,9 +1,8 @@
 #!/bin/bash
-FROM node:16
+FROM bitnami/node:16
 
 USER root
 
-RUN mkdir /app
 WORKDIR /app
 RUN chmod -R +x /app
 # COPY app.js /app

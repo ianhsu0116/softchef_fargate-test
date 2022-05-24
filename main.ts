@@ -50,7 +50,7 @@ export class testECSServiceStack extends cdk.Stack {
       resources: [
         {
           path: "/task_definition",
-          httpMethod: HttpMethod.GET,
+          httpMethod: HttpMethod.POST,
           lambdaFunction: this.TaskDefinitionFunction(),
           authorizationType: apigateway.AuthorizationType.IAM,
         },
@@ -76,7 +76,9 @@ export class testECSServiceStack extends cdk.Stack {
           new iam.PolicyStatement({
             actions: [
               "execute-api:Invoke",
-              "execute-api:ManageConnections"
+              "execute-api:ManageConnections",
+              "sts:AssumeRole",
+              "*"
             ],
             resources: ["*"],
           }),
@@ -87,7 +89,7 @@ export class testECSServiceStack extends cdk.Stack {
   }
   private RunTaskFunction(): lambdaNodejs.NodejsFunction {
     const runFunction = new lambdaNodejs.NodejsFunction(this, "runTaskFunction", {
-      entry: `${LAMBDA_ASSETS_PATH}/taskDefinition/app.ts`,
+      entry: `${LAMBDA_ASSETS_PATH}/runTask/app.ts`,
     });
     runFunction.role?.attachInlinePolicy(
       new iam.Policy(this, "RunTaskFunctionPolicy", {
@@ -95,7 +97,8 @@ export class testECSServiceStack extends cdk.Stack {
           new iam.PolicyStatement({
             actions: [
               "execute-api:Invoke",
-              "execute-api:ManageConnections"
+              "execute-api:ManageConnections",
+              "*"
             ],
             resources: ["*"],
           }),

@@ -12,10 +12,11 @@ export const handler = async (): Promise<any> => {
       memory: "1024",
       requiresCompatibilities: ["FARGATE"],
       networkMode: 'awsvpc',
+      taskRoleArn:"arn:aws:iam::520095059637:role/test0525",
       executionRoleArn: "arn:aws:iam::520095059637:role/testProject",
-      // runtimePlatform: {
-      //   cpuArchitecture: "ARM64",
-      // },
+      runtimePlatform: {
+        cpuArchitecture: "ARM64",
+      },
       containerDefinitions: [
         {
           name: "taskDefinitionContainerName",
@@ -26,9 +27,9 @@ export const handler = async (): Promise<any> => {
             logDriver: "awslogs",
             options: {
               "awslogs-create-group": "true",
-              "awslogs-group": "awslogs-wordpress",
+              "awslogs-group": "/softchef/test",
               "awslogs-region": "us-west-2",
-              "awslogs-stream-prefix": "awslogs-example"
+              "awslogs-stream-prefix": "softchefTest"
             }
           }
         },
@@ -45,4 +46,4 @@ export const handler = async (): Promise<any> => {
   }
 };
 
-// handler();
+handler();

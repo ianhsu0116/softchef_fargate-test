@@ -1,8 +1,12 @@
-import { ECSClient, RegisterTaskDefinitionCommand, RegisterTaskDefinitionCommandInput } from "@aws-sdk/client-ecs";
+import {
+  ECSClient,
+  RegisterTaskDefinitionCommand,
+  RegisterTaskDefinitionCommandInput,
+} from "@aws-sdk/client-ecs";
 
 export const handler = async (): Promise<any> => {
   const client = new ECSClient({
-    region: 'us-west-2'
+    region: "us-west-2",
   });
 
   try {
@@ -11,15 +15,21 @@ export const handler = async (): Promise<any> => {
       cpu: "512",
       memory: "1024",
       requiresCompatibilities: ["FARGATE"],
-      networkMode: 'awsvpc',
+      networkMode: "awsvpc",
       executionRoleArn: "arn:aws:iam::520095059637:role/testProject",
-      // runtimePlatform: {
-      //   cpuArchitecture: "ARM64",
-      // },
+      // taskRoleArn: "arn:aws:iam::520095059637:role/testProject",
+      taskRoleArn: "arn:aws:iam::520095059637:role/test0525",
+      runtimePlatform: {
+        cpuArchitecture: "ARM64",
+      },
       containerDefinitions: [
         {
           name: "taskDefinitionContainerName",
-          image: "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest",
+          // name: "sampleTaskDefinitionContainerName",
+          image:
+            "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest",
+          // image:
+          //   "amazon/amazon-ecs-sample",
           cpu: 512,
           memory: 1024,
           logConfiguration: {
@@ -28,9 +38,9 @@ export const handler = async (): Promise<any> => {
               "awslogs-create-group": "true",
               "awslogs-group": "awslogs-wordpress",
               "awslogs-region": "us-west-2",
-              "awslogs-stream-prefix": "awslogs-example"
-            }
-          }
+              "awslogs-stream-prefix": "awslogs-example",
+            },
+          },
         },
       ],
     };

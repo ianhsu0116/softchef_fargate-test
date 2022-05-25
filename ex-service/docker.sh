@@ -5,7 +5,9 @@ cd project
 # RUN npm install
 npm install
 
+cd ..
+
+node app.js
+
 aws --version
-git --version
-cdk --version
 

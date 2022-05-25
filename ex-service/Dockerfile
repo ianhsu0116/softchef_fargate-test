@@ -5,6 +5,7 @@ USER root
 
 WORKDIR /app
 RUN chmod -R +x /app
+# COPY app.js /app
 
 RUN apt update && \
     apt install git && \
@@ -14,8 +15,10 @@ RUN apt update && \
     ./aws/install
 
 
+# https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip
 # Bundle app source
 COPY . .
 
+EXPOSE 80
 
-CMD ["./docker.sh"]
+CMD ["sh","docker.sh"]

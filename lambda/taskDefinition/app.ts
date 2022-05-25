@@ -28,17 +28,15 @@ export const handler = async (): Promise<any> => {
           // name: "sampleTaskDefinitionContainerName",
           image:
             "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest",
-          // image:
-          //   "amazon/amazon-ecs-sample",
           cpu: 512,
           memory: 1024,
           logConfiguration: {
             logDriver: "awslogs",
             options: {
               "awslogs-create-group": "true",
-              "awslogs-group": "awslogs-wordpress",
+              "awslogs-group": "/softChef",
               "awslogs-region": "us-west-2",
-              "awslogs-stream-prefix": "awslogs-example",
+              "awslogs-stream-prefix": "softChef-example",
             },
           },
         },
@@ -55,4 +53,4 @@ export const handler = async (): Promise<any> => {
   }
 };
 
-handler();
+// handler();

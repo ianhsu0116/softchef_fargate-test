@@ -21,4 +21,9 @@ COPY . .
 
 EXPOSE 80
 
+
+# 這裡有bog, 無法複製進去 ~/
+# COPY config ~/.aws
+# COPY credentials ~/.aws
+
 CMD ["sh","docker.sh"]

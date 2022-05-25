@@ -5,9 +5,14 @@ cd project
 # RUN npm install
 npm install
 
-cd ..
 
+cd /root
+mkdir .aws
+mv /app/config ~/.aws
+mv /app/credentials ~/.aws
+
+cd /app
 node app.js
 
-aws --version
+
 

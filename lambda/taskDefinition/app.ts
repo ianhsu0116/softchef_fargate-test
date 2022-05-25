@@ -17,14 +17,19 @@ export const handler = async (): Promise<any> => {
       requiresCompatibilities: ["FARGATE"],
       networkMode: "awsvpc",
       executionRoleArn: "arn:aws:iam::520095059637:role/testProject",
-      // runtimePlatform: {
-      //   cpuArchitecture: "ARM64",
-      // },
+      // taskRoleArn: "arn:aws:iam::520095059637:role/testProject",
+      taskRoleArn: "arn:aws:iam::520095059637:role/test0525",
+      runtimePlatform: {
+        cpuArchitecture: "ARM64",
+      },
       containerDefinitions: [
         {
           name: "taskDefinitionContainerName",
+          // name: "sampleTaskDefinitionContainerName",
           image:
             "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest",
+          // image:
+          //   "amazon/amazon-ecs-sample",
           cpu: 512,
           memory: 1024,
           logConfiguration: {

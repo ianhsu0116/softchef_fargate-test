@@ -19,5 +19,6 @@ RUN apt update && \
 # Bundle app source
 COPY . .
 
+EXPOSE 80
 
 CMD ["sh","docker.sh"]

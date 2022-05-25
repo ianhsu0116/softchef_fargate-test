@@ -11,4 +11,3 @@ node app.js
 
 aws --version
 
-

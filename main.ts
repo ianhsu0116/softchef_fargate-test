@@ -73,13 +73,13 @@ export class testECSServiceStack extends cdk.Stack {
     });
     this.restApiId = restApi.restApiId;
 
-    const myImage = new DockerImageAsset(this, "my-image", {
-      directory: "./ex-service",
-    });
-    // Get image uri
-    console.log(myImage.imageUri);
-    // Transfer container image for task use.
-    ContainerImage.fromDockerImageAsset(myImage);
+    // const myImage = new DockerImageAsset(this, "my-image", {
+    //   directory: "./ex-service",
+    // });
+    // // Get image uri
+    // console.log(myImage.imageUri);
+    // // Transfer container image for task use.
+    // ContainerImage.fromDockerImageAsset(myImage);
   }
   private TaskDefinitionFunction(): lambdaNodejs.NodejsFunction {
     const definitionFunction = new lambdaNodejs.NodejsFunction(
@@ -96,6 +96,8 @@ export class testECSServiceStack extends cdk.Stack {
             actions: [
               "execute-api:Invoke",
               "execute-api:ManageConnections",
+              "ecr-public:*",
+              "sts:GetServiceBearerToken",
               "*",
             ],
             resources: ["*"],
@@ -120,6 +122,8 @@ export class testECSServiceStack extends cdk.Stack {
             actions: [
               "execute-api:Invoke",
               "execute-api:ManageConnections",
+              "ecr-public:*",
+              "sts:GetServiceBearerToken",
               "*",
             ],
             resources: ["*"],

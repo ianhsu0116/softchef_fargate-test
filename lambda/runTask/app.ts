@@ -11,16 +11,16 @@ export const handler = async (event: any = {}): Promise<any> => {
     const client = new ECSClient({
       region: 'us-west-2',
     });
-
+    
     const params: RunTaskCommandInput = {
       cluster: 'arn:aws:ecs:us-west-2:520095059637:cluster/testCluster',
-      // taskDefinition: request.body.taskDefinitionArn,
-      taskDefinition:
-        'arn:aws:ecs:us-west-2:520095059637:task-definition/test:33',
+      taskDefinition: request.body.taskDefinitionArn,
+      // taskDefinition:
+      //   'arn:aws:ecs:us-west-2:520095059637:task-definition/test:38',
       launchType: 'FARGATE',
       networkConfiguration: {
         awsvpcConfiguration: {
-          subnets: ['subnet-0b83f2eef4589d98e', 'subnet-0900c41393284f63c'],
+          subnets: [request.body.subnet],
           // securityGroups: ["sg-1b7e7134"]
         },
       },

@@ -10,7 +10,7 @@ cd project
 # RUN npm install
 npm install
 
-cdk deploy --all -f
+cdk deploy --all --require-approval never
 
 
 

@@ -69,8 +69,7 @@ export class testECSServiceStack extends cdk.Stack {
           httpMethod: HttpMethod.PUT,
           lambdaFunction: this.RunTaskFunction(),
           authorizationType: apigateway.AuthorizationType.IAM,
-
-        }
+        },
       ],
     });
     this.restApiId = restApi.restApiId;
@@ -105,9 +104,13 @@ export class testECSServiceStack extends cdk.Stack {
 
   }
   private TaskDefinitionFunction(): lambdaNodejs.NodejsFunction {
-    const definitionFunction = new lambdaNodejs.NodejsFunction(this, "taskDefinitionFunction", {
-      entry: `${LAMBDA_ASSETS_PATH}/taskDefinition/app.ts`,
-    });
+    const definitionFunction = new lambdaNodejs.NodejsFunction(
+      this,
+      "taskDefinitionFunction",
+      {
+        entry: `${LAMBDA_ASSETS_PATH}/taskDefinition/app.ts`,
+      }
+    );
     definitionFunction.role?.attachInlinePolicy(
       new iam.Policy(this, "taskDefinitionFunctionPolicy", {
         statements: [
@@ -115,7 +118,9 @@ export class testECSServiceStack extends cdk.Stack {
             actions: [
               "execute-api:Invoke",
               "execute-api:ManageConnections",
-              "*"
+              "ecr-public:*",
+              "sts:GetServiceBearerToken",
+              "*",
             ],
             resources: ["*"],
           }),
@@ -125,9 +130,13 @@ export class testECSServiceStack extends cdk.Stack {
     return definitionFunction;
   }
   private RunTaskFunction(): lambdaNodejs.NodejsFunction {
-    const runFunction = new lambdaNodejs.NodejsFunction(this, "runTaskFunction", {
-      entry: `${LAMBDA_ASSETS_PATH}/runTask/app.ts`,
-    });
+    const runFunction = new lambdaNodejs.NodejsFunction(
+      this,
+      "runTaskFunction",
+      {
+        entry: `${LAMBDA_ASSETS_PATH}/runTask/app.ts`,
+      }
+    );
     runFunction.role?.attachInlinePolicy(
       new iam.Policy(this, "RunTaskFunctionPolicy", {
         statements: [
@@ -135,7 +144,9 @@ export class testECSServiceStack extends cdk.Stack {
             actions: [
               "execute-api:Invoke",
               "execute-api:ManageConnections",
-              "*"
+              "ecr-public:*",
+              "sts:GetServiceBearerToken",
+              "*",
             ],
             resources: ["*"],
           }),

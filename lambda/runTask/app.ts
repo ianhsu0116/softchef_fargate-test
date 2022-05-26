@@ -1,23 +1,28 @@
-import { ECSClient, RunTaskCommand, RunTaskCommandInput } from "@aws-sdk/client-ecs";
+import {
+  ECSClient,
+  RunTaskCommand,
+  RunTaskCommandInput,
+} from '@aws-sdk/client-ecs';
 import { Request } from '@softchef/lambda-events';
 
 export const handler = async (event: any = {}): Promise<any> => {
   try {
     const request = new Request(event);
     const client = new ECSClient({
-      region: 'us-west-2'
+      region: 'us-west-2',
     });
-
+    
     const params: RunTaskCommandInput = {
-      cluster: "arn:aws:ecs:us-west-2:520095059637:cluster/testCluster",
-      // taskDefinition: request.body.taskDefinitionArn,
-      taskDefinition: "arn:aws:ecs:us-west-2:520095059637:task-definition/test:34",
-      launchType: "FARGATE",
+      cluster: 'arn:aws:ecs:us-west-2:520095059637:cluster/testCluster',
+      taskDefinition: request.body.taskDefinitionArn,
+      // taskDefinition:
+      //   'arn:aws:ecs:us-west-2:520095059637:task-definition/test:38',
+      launchType: 'FARGATE',
       networkConfiguration: {
         awsvpcConfiguration: {
-          subnets: ["subnet-0b83f2eef4589d98e"],
+          subnets: [request.body.subnet],
           // securityGroups: ["sg-1b7e7134"]
-        }
+        },
       },
     };
 
@@ -28,13 +33,10 @@ export const handler = async (event: any = {}): Promise<any> => {
 
     console.log("response", response);
 
-
-
   } catch (e) {
     console.log('============try catch error===========');
     console.log(e);
   }
-
 };
 
-handler();
+// handler();

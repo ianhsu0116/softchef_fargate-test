@@ -1,22 +1,26 @@
-import { ECSClient, RegisterTaskDefinitionCommand, RegisterTaskDefinitionCommandInput } from "@aws-sdk/client-ecs";
+import {
+  ECSClient,
+  RegisterTaskDefinitionCommand,
+  RegisterTaskDefinitionCommandInput,
+} from "@aws-sdk/client-ecs";
 
 export const handler = async (): Promise<any> => {
   const client = new ECSClient({
-    region: 'us-west-2'
+    region: "us-west-2",
   });
 
   try {
     const params: RegisterTaskDefinitionCommandInput = {
-      family: "test",
+      family: "Deploy",
       cpu: "512",
       memory: "1024",
       requiresCompatibilities: ["FARGATE"],
-      networkMode: 'awsvpc',
-      taskRoleArn:"arn:aws:iam::520095059637:role/test0525",
+      networkMode: "awsvpc",
       executionRoleArn: "arn:aws:iam::520095059637:role/testProject",
-      runtimePlatform: {
-        cpuArchitecture: "ARM64",
-      },
+      taskRoleArn: "arn:aws:iam::520095059637:role/test0525",
+      // runtimePlatform: {
+      //   cpuArchitecture: "ARM64",
+      // },
       containerDefinitions: [
         {
           name: "taskDefinitionContainerName",
@@ -27,11 +31,11 @@ export const handler = async (): Promise<any> => {
             logDriver: "awslogs",
             options: {
               "awslogs-create-group": "true",
-              "awslogs-group": "/softchef/test",
+              "awslogs-group": "/softChef",
               "awslogs-region": "us-west-2",
-              "awslogs-stream-prefix": "softchefTest"
-            }
-          }
+              "awslogs-stream-prefix": "softChef-example",
+            },
+          },
         },
       ],
     };
@@ -46,4 +50,4 @@ export const handler = async (): Promise<any> => {
   }
 };
 
-handler();
+// handler();

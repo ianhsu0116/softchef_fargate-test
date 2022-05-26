@@ -11,7 +11,7 @@ export const handler = async (): Promise<any> => {
 
   try {
     const params: RegisterTaskDefinitionCommandInput = {
-      family: "test",
+      family: "Deploy",
       cpu: "512",
       memory: "1024",
       requiresCompatibilities: ["FARGATE"],

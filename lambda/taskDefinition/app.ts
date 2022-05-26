@@ -3,12 +3,13 @@ import {
   RegisterTaskDefinitionCommand,
   RegisterTaskDefinitionCommandInput,
 } from "@aws-sdk/client-ecs";
+import { Response } from '@softchef/lambda-events';
 
 export const handler = async (event: any = {}): Promise<any> => {
   const client = new ECSClient({
     region: "us-west-2",
   });
-
+  const response = new Response();
   try {
     const params: RegisterTaskDefinitionCommandInput = {
       family: "Deploy",
@@ -41,9 +42,14 @@ export const handler = async (event: any = {}): Promise<any> => {
     };
 
     const command = new RegisterTaskDefinitionCommand(params);
-    const response = await client.send(command);
+    const taskDefinition = await client.send(command);
 
-    console.log(response.taskDefinition?.taskDefinitionArn);
+    console.log(taskDefinition.taskDefinition?.taskDefinitionArn);
+
+    return response.json({
+      taskDefinitionArn: taskDefinition.taskDefinition?.taskDefinitionArn,
+    });
+
   } catch (e) {
     console.log("============try catch error2===========");
     console.log(e);

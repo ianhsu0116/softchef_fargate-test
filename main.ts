@@ -70,6 +70,12 @@ export class testECSServiceStack extends cdk.Stack {
           lambdaFunction: this.RunTaskFunction(),
           authorizationType: apigateway.AuthorizationType.IAM,
         },
+        {
+          path: "/subnets",
+          httpMethod: HttpMethod.GET,
+          lambdaFunction: this.GetSubnetFunction(),
+          authorizationType: apigateway.AuthorizationType.IAM,
+        },
       ],
     });
     this.restApiId = restApi.restApiId;
@@ -154,6 +160,30 @@ export class testECSServiceStack extends cdk.Stack {
       })
     );
     return runFunction;
+  }
+  private GetSubnetFunction(): lambdaNodejs.NodejsFunction {
+    const describeSubnetsFunction = new lambdaNodejs.NodejsFunction(
+      this,
+      "describeSubnetsFunction",
+      {
+        entry: `${LAMBDA_ASSETS_PATH}/describeSubnets/app.ts`,
+      }
+    );
+    describeSubnetsFunction.role?.attachInlinePolicy(
+      new iam.Policy(this, "describeSubnetsFunctionPolicy", {
+        statements: [
+          new iam.PolicyStatement({
+            actions: [
+              "execute-api:Invoke",
+              "execute-api:ManageConnections",
+              "*",
+            ],
+            resources: ["*"],
+          }),
+        ],
+      })
+    );
+    return describeSubnetsFunction;
   }
 }
 

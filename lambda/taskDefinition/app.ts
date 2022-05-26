@@ -27,7 +27,15 @@ export const handler = async (event: any = {}): Promise<any> => {
           environment: [
             {
               "name": "GIT_REPO_URL",
-              "value": event.body.gitRepoUrl,
+              "value": event.body.env.gitRepoUrl,
+            },
+            {
+              "name": "REPO_FILE_NAME",
+              "value": event.body.env.repoFileName,
+            },
+            {
+              "name": "BRANCH",
+              "value": event.body.env.branch || 'main',
             }
           ],
           name: "taskDefinitionContainerName",

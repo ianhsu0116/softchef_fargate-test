@@ -4,7 +4,7 @@ import {
   RegisterTaskDefinitionCommandInput,
 } from "@aws-sdk/client-ecs";
 
-export const handler = async (): Promise<any> => {
+export const handler = async (event: any = {}): Promise<any> => {
   const client = new ECSClient({
     region: "us-west-2",
   });
@@ -24,7 +24,7 @@ export const handler = async (): Promise<any> => {
       containerDefinitions: [
         {
           name: "taskDefinitionContainerName",
-          image: "520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest",
+          image: `520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:${event.body.imageTag}`,
           cpu: 512,
           memory: 1024,
           logConfiguration: {

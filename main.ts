@@ -74,33 +74,33 @@ export class testECSServiceStack extends cdk.Stack {
     });
     this.restApiId = restApi.restApiId;
 
-    const image = new DockerImageAsset(this, 'CDKDockerImage', {
-      directory: path.join(__dirname, 'docker'),
-    });
-    // Copy from cdk docker image asset to another ECR.
-    new ecrdeploy.ECRDeployment(this, 'DeployECRImage', {
-      src: new ecrdeploy.DockerImageName(image.imageUri),
-      dest: new ecrdeploy.DockerImageName(`${cdk.Aws.ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest`),
-    });
-    // Copy from docker registry to ECR.
-    new ecrdeploy.ECRDeployment(this, 'DeployDockerImage2', {
-      src: new ecrdeploy.DockerImageName('ex-service:latest'),
-      dest: new ecrdeploy.DockerImageName(`${cdk.Aws.ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest`),
-    });
-    // Copy from private docker registry to ECR.
-    // The format of secret in aws secrets manager must be plain text! e.g. <username>:<password>
-    new ecrdeploy.ECRDeployment(this, 'DeployDockerImage3', {
-      src: new ecrdeploy.DockerImageName('javacs3/nginx:latest', 'username:password'),
-      // src: new ecrdeploy.DockerImageName('javacs3/nginx:latest', 'aws-secrets-manager-secret-name'),
-      // src: new ecrdeploy.DockerImageName('javacs3/nginx:latest', 'arn:aws:secretsmanager:us-west-2:000000000000:secret:id'),
-      dest: new ecrdeploy.DockerImageName(`${cdk.Aws.ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest`),
-    }).addToPrincipalPolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: [
-        'secretsmanager:GetSecretValue',
-      ],
-      resources: ['*'],
-    }));
+    // const image = new DockerImageAsset(this, 'CDKDockerImage', {
+    //   directory: path.join(__dirname, 'docker'),
+    // });
+    // // Copy from cdk docker image asset to another ECR.
+    // new ecrdeploy.ECRDeployment(this, 'DeployECRImage', {
+    //   src: new ecrdeploy.DockerImageName(image.imageUri),
+    //   dest: new ecrdeploy.DockerImageName(`${cdk.Aws.ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest`),
+    // });
+    // // Copy from docker registry to ECR.
+    // new ecrdeploy.ECRDeployment(this, 'DeployDockerImage2', {
+    //   src: new ecrdeploy.DockerImageName('ex-service:latest'),
+    //   dest: new ecrdeploy.DockerImageName(`${cdk.Aws.ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest`),
+    // });
+    // // Copy from private docker registry to ECR.
+    // // The format of secret in aws secrets manager must be plain text! e.g. <username>:<password>
+    // new ecrdeploy.ECRDeployment(this, 'DeployDockerImage3', {
+    //   src: new ecrdeploy.DockerImageName('javacs3/nginx:latest', 'username:password'),
+    //   // src: new ecrdeploy.DockerImageName('javacs3/nginx:latest', 'aws-secrets-manager-secret-name'),
+    //   // src: new ecrdeploy.DockerImageName('javacs3/nginx:latest', 'arn:aws:secretsmanager:us-west-2:000000000000:secret:id'),
+    //   dest: new ecrdeploy.DockerImageName(`${cdk.Aws.ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com/ex-service:latest`),
+    // }).addToPrincipalPolicy(new iam.PolicyStatement({
+    //   effect: iam.Effect.ALLOW,
+    //   actions: [
+    //     'secretsmanager:GetSecretValue',
+    //   ],
+    //   resources: ['*'],
+    // }));
 
   }
   private TaskDefinitionFunction(): lambdaNodejs.NodejsFunction {

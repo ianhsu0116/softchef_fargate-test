@@ -19,9 +19,8 @@ RUN apt update && \
 # Bundle app source
 COPY . .
 
-EXPOSE 80
+# EXPOSE 80
 
 CMD ["sh","docker.sh"]
-
 # cd /app
 # node app.js

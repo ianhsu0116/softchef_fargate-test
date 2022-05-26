@@ -1,7 +1,7 @@
-cd /root
-mkdir .aws
-mv /app/config ~/.aws
-mv /app/credentials ~/.aws
+# cd /root
+# mkdir .aws
+# mv /app/config ~/.aws
+# mv /app/credentials ~/.aws
 
 git clone https://github.com/ahnochen/project.git
 

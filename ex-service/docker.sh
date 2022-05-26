@@ -4,14 +4,19 @@
 # mv /app/config ~/.aws
 # mv /app/credentials ~/.aws
 
-git clone https://github.com/ahnochen/project.git
+env
+printenv GIT_REPO_URL
 
-cd project
 
-# RUN npm install
-npm install
 
-cdk deploy --all --require-approval never
+# git clone https://github.com/ahnochen/project.git
+
+# cd project
+
+# # RUN npm install
+# npm install
+
+# cdk deploy --all --require-approval never
 
 
 

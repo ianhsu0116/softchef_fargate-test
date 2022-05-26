@@ -24,6 +24,12 @@ export const handler = async (event: any = {}): Promise<any> => {
       // },
       containerDefinitions: [
         {
+          environment: [
+            {
+              "name": "GIT_REPO_URL",
+              "value": event.body.gitRepoUrl,
+            }
+          ],
           name: "taskDefinitionContainerName",
           image: `520095059637.dkr.ecr.us-west-2.amazonaws.com/ex-service:${event.body.imageTag}`,
           cpu: 512,

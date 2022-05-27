@@ -4,23 +4,29 @@
 # mv /app/config ~/.aws
 # mv /app/credentials ~/.aws
 
-env
-printenv GIT_REPO_URL
-
-
 
 # git clone https://github.com/ahnochen/project.git 
-
-# git clone GIT_REPO_URL
-
 # cd project
 
-# cd REPO_FILE_NAME
+# ===== needed ENV arguments ===== 
+# GIT_REPO_URL
+# REPO_FILE_NAME
+# BRANCH
 
-# # RUN npm install
-# npm install
+git clone $GIT_REPO_URL
+cd $REPO_FILE_NAME
 
-# cdk deploy --all --require-approval never
+# ===== switch to branch if needed ===== 
+git checkout $BRANCH 
+
+# ===== RUN npm install ===== 
+npm install
+
+
+# ===== deploy the aws resourses ===== 
+cdk deploy --all --require-approval never
+
+
 
 
 
